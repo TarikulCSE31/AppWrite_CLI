@@ -1,0 +1,11 @@
+{
+  "name": "google-auth-exchange",
+  "version": "1.0.0",
+  "description": "Appwrite Function to exchange Google ID token for Appwrite JWT",
+  "main": "index.js",
+  "type": "commonjs",
+  "dependencies": {
+    "google-auth-library": "^9.14.1",
+    "node-appwrite": "^13.0.0"
+  }
+}
