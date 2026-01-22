@@ -94,7 +94,7 @@ module.exports = async ({ req, res, log, error }) => {
       userId = created.$id;
     }
 
-    const jwt = await users.createJWT(userId);
+    const jwt = await createJwt(endpoint, projectId, apiKey, userId);
 
     return res.json({
       token: jwt.jwt,
@@ -110,3 +110,25 @@ module.exports = async ({ req, res, log, error }) => {
     );
   }
 };
+
+async function createJwt(endpoint, projectId, apiKey, userId) {
+  const baseUrl = endpoint.replace(/\/$/, "");
+  const url = `${baseUrl}/users/${userId}/jwt`;
+  const response = await fetch(url, {
+    method: "POST",
+    headers: {
+      "X-Appwrite-Project": projectId,
+      "X-Appwrite-Key": apiKey,
+      "Content-Type": "application/json"
+    },
+    body: "{}"
+  });
+
+  const data = await response.json();
+  if (!response.ok) {
+    const message = data?.message || `Appwrite error ${response.status}`;
+    throw new Error(message);
+  }
+
+  return data;
+}
