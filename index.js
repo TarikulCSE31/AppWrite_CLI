@@ -135,7 +135,9 @@ async function createJwt(endpoint, projectId, apiKey, userId) {
   const data = await response.json();
   if (!response.ok) {
     const message = data?.message || `Appwrite error ${response.status}`;
-    throw new Error(message);
+    throw new Error(
+      `${message} | url=${url} | projectId=${projectId}`
+    );
   }
 
   return data;
