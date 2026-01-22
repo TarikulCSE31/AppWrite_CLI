@@ -90,7 +90,13 @@ module.exports = async ({ req, res, log, error }) => {
       userId = existing.users[0].$id;
     } else {
       const randomPassword = crypto.randomBytes(32).toString("hex");
-      const created = await users.create(ID.unique(), email, randomPassword, name);
+      const created = await users.create(
+        ID.unique(),
+        email,
+        null,
+        randomPassword,
+        name
+      );
       userId = created.$id;
     }
 
