@@ -16,11 +16,32 @@ module.exports = async ({ req, res, log, error }) => {
     const apiKey = process.env.APPWRITE_API_KEY;
     const googleClientId = process.env.GOOGLE_CLIENT_ID;
 
-    if (!endpoint || !projectId || !apiKey || !googleClientId) {
+    const missing = [
+      !endpoint && "APPWRITE_ENDPOINT",
+      !projectId && "APPWRITE_PROJECT_ID",
+      !apiKey && "APPWRITE_API_KEY",
+      !googleClientId && "GOOGLE_CLIENT_ID"
+    ].filter(Boolean);
+
+    if (missing.length > 0) {
+      const maskedApiKey = apiKey
+        ? `${apiKey.slice(0, 6)}...${apiKey.slice(-6)}`
+        : "";
+      const currentValues = {
+        APPWRITE_ENDPOINT: endpoint || "",
+        APPWRITE_PROJECT_ID: projectId || "",
+        APPWRITE_API_KEY: maskedApiKey,
+        GOOGLE_CLIENT_ID: googleClientId || ""
+      };
+      log(
+        `Missing env vars: ${missing.join(", ")}. ` +
+          `Current values: ${JSON.stringify(currentValues)}`
+      );
       return res.json(
         {
           error:
-            "Missing env vars. Required: APPWRITE_ENDPOINT, APPWRITE_PROJECT_ID, APPWRITE_API_KEY, GOOGLE_CLIENT_ID."
+            "Missing env vars. Required: APPWRITE_ENDPOINT, APPWRITE_PROJECT_ID, APPWRITE_API_KEY, GOOGLE_CLIENT_ID.",
+          currentValues
         },
         500
       );
