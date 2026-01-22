@@ -111,8 +111,16 @@ module.exports = async ({ req, res, log, error }) => {
   }
 };
 
+function normalizeEndpoint(endpoint) {
+  const trimmed = endpoint.replace(/\/+$/, "");
+  if (trimmed.endsWith("/v1")) {
+    return trimmed.replace(/\/v1\/v1$/, "/v1");
+  }
+  return `${trimmed}/v1`;
+}
+
 async function createJwt(endpoint, projectId, apiKey, userId) {
-  const baseUrl = endpoint.replace(/\/$/, "");
+  const baseUrl = normalizeEndpoint(endpoint);
   const url = `${baseUrl}/users/${userId}/jwt`;
   const response = await fetch(url, {
     method: "POST",
