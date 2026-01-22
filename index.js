@@ -94,11 +94,11 @@ module.exports = async ({ req, res, log, error }) => {
       userId = created.$id;
     }
 
-    const jwt = await createJwt(endpoint, projectId, apiKey, userId);
+    const token = await createToken(endpoint, projectId, apiKey, userId);
 
     return res.json({
-      token: jwt.jwt,
       userId,
+      secret: token.secret,
       email,
       name
     });
@@ -119,9 +119,9 @@ function normalizeEndpoint(endpoint) {
   return `${trimmed}/v1`;
 }
 
-async function createJwt(endpoint, projectId, apiKey, userId) {
+async function createToken(endpoint, projectId, apiKey, userId) {
   const baseUrl = normalizeEndpoint(endpoint);
-  const url = `${baseUrl}/users/${userId}/jwt`;
+  const url = `${baseUrl}/users/${userId}/tokens`;
   const response = await fetch(url, {
     method: "POST",
     headers: {
